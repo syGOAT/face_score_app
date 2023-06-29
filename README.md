@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 更新
 
 
@@ -49,3 +50,11 @@ sanic                23.3.0
 }
 ```
 
+=======
+torch                1.11.0  
+numpy                1.23.1  
+opencv-python        4.6.0.66  
+sanic                23.3.0  
+
+# recognize
+>>>>>>> 81e88d474d4be723e28be9878a107e8c3b18af48
