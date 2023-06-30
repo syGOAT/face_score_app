@@ -1,8 +1,9 @@
 import sys
 import cv2
-
 from vision.ssd.config.fd_config import define_img_size
-
+from PIL import Image
+import io
+import numpy as np
 
 net_type = 'RFB'
 input_size = 480
@@ -44,7 +45,7 @@ def bigger_box(box, type=0):
 
 
 
-def get_boxes(video_path):
+def get_faces(video_path):
     cap = cv2.VideoCapture(video_path)  # capture from video
     #cap = cv2.VideoCapture(0)  # capture from camera
     while True:
@@ -64,6 +65,9 @@ def get_boxes(video_path):
             box = boxes[i, :]
             label = f" {probs[i]:.2f}"
             new_box = bigger_box(box)
+            face = orig_image[int(new_box[1]): int(new_box[3]), int(new_box[0]): int(new_box[2])]
+            _, jpg_img = cv2.imencode('.jpg', face)
+            byte_data = np.array(jpg_img, dtype=np.uint8).tobytes()
             ###
             #cv2.rectangle(orig_image, (int(new_box[0]), int(new_box[1])), (int(new_box[2]), int(new_box[3])), (0, 255, 0), 4)
             # cv2.putText(orig_image, label,
@@ -72,13 +76,13 @@ def get_boxes(video_path):
             #             0.5,  # font scale
             #             (0, 0, 255),
             #             2)  # line type
-            new_box = [ts.item() for ts in new_box]
-            faces.append(new_box)
+            faces.append(byte_data)
         break
     cap.release()
-    return new_box
+    return faces
 
 
 if __name__ == '__main__':
-    res = get_boxes('http://focnal.xyz:8082/test1.jpg')
-    print(res)
+    res = get_faces('https://focnal.xyz/static/liuxiao.jpg') 
+    img = Image.open(io.BytesIO(res[0]))
+    img.save('x.jpg')
