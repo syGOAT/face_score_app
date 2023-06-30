@@ -1,5 +1,5 @@
 import numpy as np
-
+import io
 import torch
 from torchvision import transforms
 from PIL import Image
@@ -35,7 +35,7 @@ def compute_nme(preds, target):
     return rmse        
 
 
-def main(mypic):
+def main(face_b):
     encoder = PFLDEncoder().to(device)
     encoder.load_state_dict(torch.load('checkpoint/encoder.pth', map_location=device))
     decoder_fc = DecoderFc(176)
@@ -48,17 +48,18 @@ def main(mypic):
         transforms.ToTensor(), 
     ])
 
-    mypic = transform(mypic)
-    mypic = torch.unsqueeze(mypic, dim=0)
+    face = Image.open(io.BytesIO(face_b))
+    face = transform(face)
+    face = torch.unsqueeze(face, dim=0)
 
     encoder.eval()
     decoder_fc.eval()
     decoder_score.eval()
 
     with torch.no_grad():
-        mypic = mypic.to(device)
+        face = face.to(device)
         encoder = encoder.to(device)
-        multi_scale = encoder(mypic)
+        multi_scale = encoder(face)
         score = decoder_score(multi_scale).reshape(-1)
         score = torch.pow(3.9, score) + 25
         score = score if score < 99.8 else 99.8
@@ -75,12 +76,12 @@ def main(mypic):
 
 
 idol_dict = {
-    'zsw.jpg': 0, 
-    'zjy.jpg': 0, 
-    'zrf.jpg': 0, 
-    'xlz.jpg': 0, 
-    'lhq.jpg': 0, 
-    'mm.jpg': 0
+    'zsw': 0, 
+    'zjy': 0, 
+    'zrf': 0, 
+    'xlz': 0, 
+    'lhq': 0, 
+    'mm': 0
 
 }
 
@@ -93,7 +94,8 @@ def idol_pipei(landmark):
 
 
 if __name__ == "__main__":
-    mypic = 'data/SCUT-FBP5500_v2/Images/CM423.jpg'
-    mypic = Image.open(mypic)
-    res = main(mypic)
+    import requests
+    url = 'https://focnal.xyz/static/out/f5af86fd491d4bcf961556bdf02c5236.jpg'
+    face_b = requests.get(url).content
+    res = main(face_b)
     print(res)
