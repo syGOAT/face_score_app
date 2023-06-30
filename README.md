@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 更新
 
 
@@ -14,8 +13,6 @@ sanic                23.3.0
 
 # recognize_boxes
 
-仅一个路由
-
 请求：get，图片url包含在请求url中
 
 响应：人脸坐标集，元素为 float 类型
@@ -29,32 +26,34 @@ sanic                23.3.0
 
 
 
-# score_gender_age
-
-### 路由1
+# score_detail
 
 请求：get，图片url包含在请求url中（图片为切割后的人脸图片）
 
-响应：得分 float
-
-### 路由2
-
-请求：get，图片url包含在请求url中（图片为切割后的人脸图片）
-
-响应：年龄与性别
+响应：
 
 ```json
 {
+    'score': float,
 	'gender': str, 
-	'age': str
+	'age': str, 
+    'idol': {
+        'zsw.jpg': float, 
+        ...
+    }
 }
 ```
 
-=======
-torch                1.11.0  
-numpy                1.23.1  
-opencv-python        4.6.0.66  
-sanic                23.3.0  
+在 idol 字典中，每个键对应的值为“距离损失函数值”，**越小越匹配**
 
-# recognize
->>>>>>> 81e88d474d4be723e28be9878a107e8c3b18af48
+
+
+| 文件名  | 明星姓名      |
+| ------- | ------------- |
+| zsw.jpg | 张颂文        |
+| zjy.jpg | 张婧仪        |
+| zrf.jpg | 周润发        |
+| lhq.jpg | 刘华强        |
+| xlz.jpg | 莱昂纳多      |
+| mm.jpg  | 泰勒·斯威夫特 |
+
